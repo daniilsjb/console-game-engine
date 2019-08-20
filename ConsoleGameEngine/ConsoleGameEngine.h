@@ -666,6 +666,17 @@ protected:
 		}
 	}
 
+	void DrawPartialSprite(int x, int y, Sprite& sprite, int ox, int oy, int w, int h)
+	{
+		for (int i = 0; i < w; i++)
+		{
+			for (int j = 0; j < h; j++)
+			{
+				DrawPoint(x + i, y + j, sprite.GetCharacter(i + ox, j + oy), sprite.GetColor(i + ox, j + oy));
+			}
+		}
+	}
+
 	void DisplayText(int x, int y, std::wstring text, short color = DEFAULT_COLOR)
 	{
 		int index = screenWidth * y + x;
