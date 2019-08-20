@@ -233,7 +233,7 @@ protected:
 
 	//////////////////////////////////////// RENDER ////////////////////////////////////////////////
 
-protected:
+public:
 	enum Color
 	{
 		FG_BLACK = 0x00,
@@ -440,6 +440,7 @@ protected:
 
 	};
 
+protected:
 	void Draw(int index, short character = DEFAULT_CHAR, short color = DEFAULT_COLOR)
 	{
 		if (index >= 0 || index < screenWidth * screenHeight)
@@ -652,13 +653,13 @@ protected:
 		}
 	}
 
-	void DrawSpriteAlpha(int x, int y, Sprite& sprite)
+	void DrawSpriteAlpha(int x, int y, Sprite& sprite, short transparencyCol)
 	{
 		for (int i = 0; i < sprite.GetWidth(); i++)
 		{
 			for (int j = 0; j < sprite.GetHeight(); j++)
 			{
-				if (sprite.GetColor(i, j) != BG_BLACK)
+				if (sprite.GetColor(i, j) != transparencyCol)
 				{
 					DrawPoint(x + i, y + j, sprite.GetCharacter(i, j), sprite.GetColor(i, j));
 				}
@@ -1080,6 +1081,14 @@ private:
 		return onUserSoundFilter(channel, globalTime, mixedSample);
 	}
 
+public:
+	void PlayAudioClip(int id, bool loop = false)
+	{
+		if (id < 0 || id >= (int)audioClips.size()) return;
+		CurrentlyPlayingClip clipToPlay(id, loop);
+		currentlyPlayingClips.push_back(clipToPlay);
+	}
+
 protected:
 	unsigned int LoadAudioClip(std::wstring fileName)
 	{
@@ -1090,13 +1099,6 @@ protected:
 
 		audioClips.push_back(audioClip);
 		return audioClips.size() - 1;
-	}
-
-	void PlayAudioClip(int id, bool loop = false)
-	{
-		if (id < 0 || id >= (int)audioClips.size()) return;
-		CurrentlyPlayingClip clipToPlay(id, loop);
-		currentlyPlayingClips.push_back(clipToPlay);
 	}
 
 	bool StartAudio(int samplesPerSec = 44100, int channels = 1, int blockCount = 8, int samplesPerBlock = 512)
