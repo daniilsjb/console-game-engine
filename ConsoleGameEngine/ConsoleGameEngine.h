@@ -73,10 +73,10 @@ public:
 		//Remove cursor
 		CONSOLE_CURSOR_INFO cursor = { 100, false };
 		if (!SetConsoleCursorInfo(console, &cursor))
-			return Error(L"SetConsoleScreenBufferSize");
+			return Error(L"SetConsoleCursorInfo");
 
 		//Set font properties (includes size of a text cell)
-		CONSOLE_FONT_INFOEX font = { sizeof(font), 0,{ (short)pixelWidth, (short)pixelHeight }, FF_DONTCARE, FW_NORMAL };
+		CONSOLE_FONT_INFOEX font = { sizeof(font), 0, { (short)pixelWidth, (short)pixelHeight }, FF_DONTCARE, FW_NORMAL };
 		wcscpy_s(font.FaceName, L"Consolas");
 		if (!SetCurrentConsoleFontEx(console, false, &font))
 			return Error(L"SetCurrentConsoleFontEx");
@@ -84,11 +84,11 @@ public:
 		if (!SetConsoleActiveScreenBuffer(console))
 			return Error(L"SetConsoleActiveScreenBuffer");
 
+		//Determine if console of the specified size may be constructed
 		CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
 		if (!GetConsoleScreenBufferInfo(console, &consoleInfo))
 			return Error(L"GetConsoleScreenBufferInfo");
 
-		//Determine if console of the specified size can be constructed
 		COORD maxSize = consoleInfo.dwMaximumWindowSize;
 		if (screenWidth > maxSize.X || screenHeight > maxSize.Y)
 			return Error(L"Specified size and font are too big, impossible to construct the console");
@@ -98,18 +98,24 @@ public:
 		if (!SetConsoleWindowInfo(console, TRUE, &screenArea))
 			return Error(L"Specified size and font are too big, impossible to construct the console.");
 
-		//Save original input mode to restore it later on
+		//Save the original input mode to restore it later on
 		if (!GetConsoleMode(consoleInput, &originalInput))
 			return Error(L"GetConsoleMode");
 
-		//Set new input mode
+		//Set the new input mode
 		if (!SetConsoleMode(consoleInput, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
 			return Error(L"SetConsoleMode");
 
+		//Allocate memory for the screen buffer
 		screen = new CHAR_INFO[screenWidth * screenHeight];
 		SecureZeroMemory(screen, sizeof(CHAR_INFO) * screenWidth * screenHeight);
 
+		//Set a routine for application's close signal
 		SetConsoleCtrlHandler((PHANDLER_ROUTINE)CloseHandler, TRUE);
+
+		//Disable window resizing
+		HWND consoleWindow = GetConsoleWindow();
+		SetWindowLong(consoleWindow, GWL_STYLE, GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
 
 		return true;
 	}
@@ -145,6 +151,7 @@ private:
 
 		while (running)
 		{
+			//Find time difference between current and previous frames
 			t2 = std::chrono::system_clock::now();
 			std::chrono::duration<float> duration = t2 - t1;
 			float elapsedTime = duration.count();
@@ -157,7 +164,7 @@ private:
 
 			WriteConsoleOutput(console, screen, { (short)screenWidth, (short)screenHeight }, { 0, 0 }, &screenArea);
 
-			//If game is finished, check whether it's allowed to exit or not
+			//If game is finished, check whether it's allowed to exit or not and perform clean-up
 			if (!running)
 			{
 				if (OnDestroy())
@@ -210,14 +217,14 @@ protected:
 		return screen[screenWidth * y + x].Char.UnicodeChar;
 	}
 
-	short GetScreenColor(int x, int y)
-	{
-		return screen[screenWidth * y + x].Attributes;
-	}
-
 	short GetScreenColor(int i)
 	{
 		return screen[i].Attributes;
+	}
+
+	short GetScreenColor(int x, int y)
+	{
+		return screen[screenWidth * y + x].Attributes;
 	}
 
 	void SetApplicationTitle(LPCWSTR title)
