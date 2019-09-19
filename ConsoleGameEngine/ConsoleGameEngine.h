@@ -394,19 +394,37 @@ public:
 
 		short SampleCharacter(float x, float y)
 		{
-			int sx = (int)(x * (float)width - 1.0f);
-			int sy = (int)(y * (float)height - 1.0f);
+			int sx = (int)(x * (float)width);
+			int sy = (int)(y * (float)height);
 
-			if (sx < 0 || sx >= width || sy < 0 || sy >= height) return ' ';
+			if (sx < 0)
+				sx = 0;
+			else if (sx >= width)
+				sx = width - 1;
+
+			if (sy < 0)
+				sy = 0;
+			else if (sy >= height)
+				sy = height - 1;
+
 			return contents[width * sy + sx].Char.UnicodeChar;
 		}
 
 		short SampleColor(float x, float y)
 		{
-			int sx = (int)(x * (float)width - 1.0f);
-			int sy = (int)(y * (float)height - 1.0f);
+			int sx = (int)(x * (float)width);
+			int sy = (int)(y * (float)height);
 
-			if (sx < 0 || sx >= width || sy < 0 || sy >= height) return BG_BLACK;
+			if (sx < 0)
+				sx = 0;
+			else if (sx >= width)
+				sx = width - 1;
+
+			if (sy < 0)
+				sy = 0;
+			else if (sy >= height)
+				sy = height - 1;
+
 			return contents[width * sy + sx].Attributes;
 		}
 
