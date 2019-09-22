@@ -703,22 +703,22 @@ protected:
 		}
 	}
 
-	void DisplayText(int x, int y, std::wstring text, short color = DEFAULT_COLOR)
+	void DisplayText(int x, int y, std::wstring text, short bgColor = DEFAULT_COLOR, short fgColor = FG_BLACK)
 	{
-		int index = screenWidth * y + x;
-		for (unsigned int i = 0; i < text.size(); i++)
+		short index = GetScreenWidth() * y + x;
+		for (size_t i = 0; i < text.size(); i++)
 		{
-			Draw(index + i, text[i], color);
+			Draw(index + i, text[i], bgColor | fgColor);
 		}
 	}
 
-	void DisplayTextAlpha(int x, int y, std::wstring text, short color = DEFAULT_COLOR)
+	void DisplayTextAlpha(int x, int y, std::wstring text, short bgColor = DEFAULT_COLOR, short fgColor = FG_BLACK)
 	{
-		int index = screenWidth * y + x;
-		for (unsigned int i = 0; i < text.size(); i++)
+		short index = GetScreenWidth() * y + x;
+		for (size_t i = 0; i < text.size(); i++)
 		{
 			if (text[i] != L' ')
-				Draw(index + i, text[i], color);
+				Draw(index + i, text[i], bgColor | fgColor);
 		}
 	}
 
@@ -731,9 +731,9 @@ protected:
 		}
 	}
 
-	void ClearScreen()
+	void ClearScreen(short character = DEFAULT_CHAR, short color = BG_BLACK)
 	{
-		Fill(0, 0, screenWidth * screenHeight, ' ', BG_BLACK);
+		Fill(0, 0, screenWidth * screenHeight, character, color);
 	}
 
 	void FloodFill(int x, int y, short color = DEFAULT_COLOR)
@@ -829,19 +829,19 @@ private:
 		{
 			switch (inputBuffer[i].EventType)
 			{
-			case MOUSE_EVENT:
-			{
-				switch (inputBuffer[i].Event.MouseEvent.dwEventFlags)
+				case MOUSE_EVENT:
 				{
-				case MOUSE_MOVED:
-				{
-					mouseX = inputBuffer[i].Event.MouseEvent.dwMousePosition.X;
-					mouseY = inputBuffer[i].Event.MouseEvent.dwMousePosition.Y;
+					switch (inputBuffer[i].Event.MouseEvent.dwEventFlags)
+					{
+						case MOUSE_MOVED:
+						{
+							mouseX = inputBuffer[i].Event.MouseEvent.dwMousePosition.X;
+							mouseY = inputBuffer[i].Event.MouseEvent.dwMousePosition.Y;
+							break;
+						}
+					}
 					break;
 				}
-				}
-				break;
-			}
 			}
 		}
 
