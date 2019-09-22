@@ -232,7 +232,7 @@ protected:
 		SetConsoleTitle(title);
 	}
 
-	virtual bool OnStart() = 0;
+	virtual bool OnStart() { return true; }
 
 	virtual bool OnUpdate(float elapsedTime) = 0;
 
