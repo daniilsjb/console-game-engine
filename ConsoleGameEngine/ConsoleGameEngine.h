@@ -703,6 +703,20 @@ protected:
 		}
 	}
 
+	void DrawPartialSpriteAlpha(int x, int y, Sprite& sprite, int ox, int oy, int w, int h, short transparencyCol)
+	{
+		for (int i = 0; i < w; i++)
+		{
+			for (int j = 0; j < h; j++)
+			{
+				if (sprite.GetColor(i + ox, j + oy) != transparencyCol)
+				{
+					DrawPoint(x + i, y + j, sprite.GetCharacter(i + ox, j + oy), sprite.GetColor(i + ox, j + oy));
+				}
+			}
+		}
+	}
+
 	void DisplayText(int x, int y, std::wstring text, short bgColor = DEFAULT_COLOR, short fgColor = FG_BLACK)
 	{
 		short index = GetScreenWidth() * y + x;
