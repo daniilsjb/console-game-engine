@@ -1,4 +1,4 @@
 # ConsoleGameEngine
-Game Engine created entirely within Windows' console API. Inspired by javidx9's olcConsoleGameEngine, written from scratch with my own modifications and improvements. Personal, non-commercial project.
+Game Engine created entirely within Windows' console API. Inspired by javidx9's olcConsoleGameEngine (original: https://github.com/OneLoneCoder/videos/blob/master/olcConsoleGameEngine.h), written from scratch with my own modifications and improvements. Personal, non-commercial project.
 
-Note: the engine is currently written as a single header file (just like the original olcConsoleGameEngine). It is in no way a good practice, but it's much easier to use for small projects than a static library.
+The original olcConsoleGameEngine is placed under the GNU GPLv3 license (https://github.com/OneLoneCoder/videos/blob/master/LICENSE)
